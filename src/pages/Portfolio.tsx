@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 declare global {
   interface Window {
@@ -60,30 +59,21 @@ const InstagramEmbed = ({ permalink }: { permalink: string }) => {
 };
 
 const categories = [
-  { label: "Model Portfolio", folder: "model" },
-  { label: "Event", folder: "events" },
-  { label: "Fashion & E-Commerce", folder: "fashion" },
-  { label: "Club", folder: "club" },
-  { label: "Portraits", folder: "portraits" },
+  { label: "Model Portfolio", folder: "model", count: 40 },
+  { label: "Event", folder: "events", count: 30 },
+  { label: "Fashion & E-Commerce", folder: "fashion", count: 20 },
+  { label: "Club", folder: "club", count: 35 },
+  { label: "Portraits", folder: "portraits", count: 25 },
 ];
 
-const generateImages = (folder: string, label: string, count: number) => {
-  return Array.from({ length: count }, (_, i) => ({
+const portfolioImages = categories.flatMap(({ label, folder, count }) =>
+  Array.from({ length: count }, (_, i) => ({
     id: `${folder}-${i + 1}`,
     src: `/assets/images/${folder}/${i + 1}.jpg`,
     category: label,
     title: `${label} ${i + 1}`,
-  }));
-};
-
-const portfolioImages = [
-  ...generateImages("model", "Model Portfolio", 40),
-  ...generateImages("events", "Event", 30),
-  ...generateImages("club", "Club", 35),
-  ...generateImages("fashion", "Fashion & E-Commerce", 20),
-  ...generateImages("portraits", "Portraits", 25),
-];
-
+  }))
+);
 
 const portfolioVideos = [
   {
@@ -138,8 +128,8 @@ const portfolioVideos = [
 ];
 
 const Portfolio = () => {
- const [activeCategory, setActiveCategory] = useState(categories[0].label);
-const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState(categories[0].label);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const filteredImages = portfolioImages.filter(
     (img) => img.category === activeCategory
@@ -191,21 +181,21 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
-            <button
-              key={category.label}
-              onClick={() => {
-                setActiveCategory(category.label);
-                setSelectedImage(null);
-              }}
-              className={`px-5 py-3 rounded-full text-sm md:text-base transition-all ${
-                activeCategory === category.label
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-foreground hover:bg-primary/10 border border-border"
-              }`}
-            >
-              {category.label}
-            </button>
-          ))}
+              <button
+                key={category.label}
+                onClick={() => {
+                  setActiveCategory(category.label);
+                  setSelectedImage(null);
+                }}
+                className={`px-5 py-3 rounded-full text-sm md:text-base transition-all ${
+                  activeCategory === category.label
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card text-foreground hover:bg-primary/10 border border-border"
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -216,7 +206,6 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
             <h2 className="text-2xl font-display font-bold text-foreground mb-2">
               Photo Gallery
             </h2>
-
           </div>
 
           <motion.div
@@ -237,7 +226,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
                 >
                   <img
                     src={image.src}
-                    alt={image.title ?? image.category}
+                    alt={image.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
@@ -248,7 +237,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
                       {image.category}
                     </p>
                     <h3 className="text-foreground text-lg font-medium">
-                      {image.title ?? image.category}
+                      {image.title}
                     </h3>
                   </div>
                 </motion.div>
@@ -260,69 +249,65 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
       {activeCategory !== "Club" && activeCategory !== "Portraits" && (
         <section className="pb-16 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-display font-bold text-foreground mb-2">
-              Video Work
-            </h2>
-            <p className="text-muted-foreground">
-              Reels, event recaps, interviews, and short-form content.
-            </p>
-          </div>
-
-          {filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredVideos.map((video) => (
-                <div
-                  key={video.id}
-                  className="bg-card border border-border rounded-2xl overflow-hidden p-4"
-                >
-                  {video.type === "instagram" ? (
-                    <InstagramEmbed permalink={video.permalink} />
-                  ) : (
-                    <div className="relative aspect-[9/16] bg-black rounded-xl overflow-hidden">
-                      <video
-                        controls
-                        poster={video.poster}
-                        className="w-full h-full object-cover"
-                      >
-                        <source src={video.src} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-
-                      <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-2">
-                        <Play size={14} className="text-primary" />
-                        <span className="text-xs text-foreground font-medium">
-                          Reel
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-5">
-                    <p className="text-primary text-xs font-medium tracking-widest uppercase mb-1">
-                      {video.category}
-                    </p>
-                    <h3 className="text-foreground text-lg font-medium">
-                      {video.title}
-                    </h3>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-card border border-border rounded-2xl p-8 text-center">
-              <p className="text-foreground font-medium mb-2">
-                No videos added for this category yet
-              </p>
+          <div className="container mx-auto px-6">
+            <div className="mb-8">
+              <h2 className="text-2xl font-display font-bold text-foreground mb-2">
+                Video Work
+              </h2>
               <p className="text-muted-foreground">
-                Add Instagram Reel links or local videos to the{" "}
-                <code>portfolioVideos</code> array.
+                Reels, event recaps, interviews, and short-form content.
               </p>
             </div>
-          )}
-        </div>
-      </section>
+
+            {filteredVideos.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {filteredVideos.map((video) => (
+                  <div
+                    key={video.id}
+                    className="bg-card border border-border rounded-2xl overflow-hidden p-4"
+                  >
+                    {video.type === "instagram" ? (
+                      <InstagramEmbed permalink={video.permalink} />
+                    ) : (
+                      <div className="relative aspect-[9/16] bg-black rounded-xl overflow-hidden">
+                        <video controls className="w-full h-full object-cover">
+                          <source src={video.src} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+
+                        <div className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-2">
+                          <Play size={14} className="text-primary" />
+                          <span className="text-xs text-foreground font-medium">
+                            Reel
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-5">
+                      <p className="text-primary text-xs font-medium tracking-widest uppercase mb-1">
+                        {video.category}
+                      </p>
+                      <h3 className="text-foreground text-lg font-medium">
+                        {video.title}
+                      </h3>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-card border border-border rounded-2xl p-8 text-center">
+                <p className="text-foreground font-medium mb-2">
+                  No videos added for this category yet
+                </p>
+                <p className="text-muted-foreground">
+                  Add Instagram Reel links or local videos to the{" "}
+                  <code>portfolioVideos</code> array.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
       )}
 
       <AnimatePresence>
@@ -375,7 +360,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
               <div className="space-y-4">
                 <img
                   src={activeImage.src}
-                  alt={activeImage.title ?? activeImage.category}
+                  alt={activeImage.title}
                   className="max-w-full max-h-[75vh] object-contain rounded-lg mx-auto"
                 />
                 <div className="text-center">
@@ -383,7 +368,7 @@ const [selectedImage, setSelectedImage] = useState<string | null>(null);
                     {activeImage.category}
                   </p>
                   <h3 className="text-foreground text-xl font-display font-medium mt-1">
-                    {activeImage.title ?? activeImage.category}
+                    {activeImage.title}
                   </h3>
                 </div>
               </div>
