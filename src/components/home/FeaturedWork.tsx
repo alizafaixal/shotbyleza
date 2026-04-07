@@ -6,37 +6,37 @@ import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 const featuredImages = [
   {
     id: 1,
-    src: "./src/images/model/1.JPG",
+    src: "/assets/images/model/1.jpg",
     alt: "Model portfolio photography",
     category: "Model Portfolio",
   },
   {
     id: 2,
-    src: "./src/images/events/10.JPG",
+    src: "/assets/images/events/10.jpg",
     alt: "Event photography",
     category: "Event",
   },
   {
     id: 3,
-    src: "./src/images/fashion/1.JPG",
+    src: "/assets/images/fashion/1.jpg",
     alt: "Fashion and e-commerce photography",
     category: "Fashion & E-Commerce",
   },
   {
     id: 4,
-    src: "./src/images/portraits/1.JPG",
+    src: "/assets/images/portraits/1.jpg",
     alt: "Portrait photography",
     category: "Portraits",
   },
   {
     id: 5,
-    src: "./src/images/club/1.JPG",
+    src: "/assets/images/club/1.jpg",
     alt: "Club photography",
     category: "Club",
   },
   {
     id: 6,
-    src: "./src/images/model/2.JPG",
+    src: "/assets/images/model/2.jpg",
     alt: "Model portfolio photography",
     category: "Model Portfolio",
   },

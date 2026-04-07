@@ -60,28 +60,28 @@ const InstagramEmbed = ({ permalink }: { permalink: string }) => {
 };
 
 const categories = [
-  "Model Portfolio",
-  "Event",
-  "Fashion & E-Commerce",
-  "Club",
-  "Portraits",
+  { label: "Model Portfolio", folder: "model" },
+  { label: "Event", folder: "events" },
+  { label: "Fashion & E-Commerce", folder: "fashion" },
+  { label: "Club", folder: "club" },
+  { label: "Portraits", folder: "portraits" },
 ];
 
-const generateImages = (category: string, count: number) => {
+const generateImages = (folder: string, label: string, count: number) => {
   return Array.from({ length: count }, (_, i) => ({
-    id: `${category}-${i + 1}`,
-    src: `/assets/images/${category}/${i + 1}.jpg`,
-    category,
+    id: `${folder}-${i + 1}`,
+    src: `/assets/images/${folder}/${i + 1}.jpg`,
+    category: label,
+    title: `${label} ${i + 1}`,
   }));
 };
 
 const portfolioImages = [
-  ...generateImages("model", 40),
-  ...generateImages("events", 30),
-  ...generateImages("club", 35),
-  ...generateImages("fashion", 20),
-  ...generateImages("couple", 15),
-  ...generateImages("portraits", 25),
+  ...generateImages("model", "Model Portfolio", 40),
+  ...generateImages("events", "Event", 30),
+  ...generateImages("club", "Club", 35),
+  ...generateImages("fashion", "Fashion & E-Commerce", 20),
+  ...generateImages("portraits", "Portraits", 25),
 ];
 
 
@@ -138,8 +138,8 @@ const portfolioVideos = [
 ];
 
 const Portfolio = () => {
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+ const [activeCategory, setActiveCategory] = useState(categories[0].label);
+const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const filteredImages = portfolioImages.filter(
     (img) => img.category === activeCategory
@@ -191,21 +191,21 @@ const Portfolio = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => {
-                  setActiveCategory(category);
-                  setSelectedImage(null);
-                }}
-                className={`px-5 py-3 rounded-full text-sm md:text-base transition-all ${
-                  activeCategory === category
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-foreground hover:bg-primary/10 border border-border"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+            <button
+              key={category.label}
+              onClick={() => {
+                setActiveCategory(category.label);
+                setSelectedImage(null);
+              }}
+              className={`px-5 py-3 rounded-full text-sm md:text-base transition-all ${
+                activeCategory === category.label
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-primary/10 border border-border"
+              }`}
+            >
+              {category.label}
+            </button>
+          ))}
           </div>
         </div>
       </section>
