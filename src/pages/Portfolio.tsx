@@ -59,11 +59,11 @@ const InstagramEmbed = ({ permalink }: { permalink: string }) => {
 };
 
 const categories = [
-  { label: "Model Portfolio", folder: "model", count: 40 },
-  { label: "Event", folder: "events", count: 30 },
-  { label: "Fashion & E-Commerce", folder: "fashion", count: 20 },
-  { label: "Club", folder: "club", count: 35 },
-  { label: "Portraits", folder: "portraits", count: 25 },
+  { label: "Model Portfolio", folder: "model", count: 29 },
+  { label: "Event", folder: "events", count: 27 },
+  { label: "Fashion & E-Commerce", folder: "fashion", count: 46 },
+  { label: "Club", folder: "club", count: 59 },
+  { label: "Portraits", folder: "portraits", count: 12 },
 ];
 
 const portfolioImages = categories.flatMap(({ label, folder, count }) =>
