@@ -69,7 +69,7 @@ const categories = [
 const portfolioImages = categories.flatMap(({ label, folder, count }) =>
   Array.from({ length: count }, (_, i) => ({
     id: `${folder}-${i + 1}`,
-    src: `/assets/images/${folder}/${i + 1}.jpg`,
+    src: `/assets/images/${folder}/${i + 1}.webp`,
     category: label,
     title: `${label} ${i + 1}`,
   }))
