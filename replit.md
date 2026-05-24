@@ -1,44 +1,58 @@
-# [Project name]
+# ShotByLeza
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Sydney-based photography portfolio site for ShotByLeza — showcasing travel, portraits, events, fashion, and nightlife photography.
 
 ## Run & Operate
 
+- `pnpm --filter @workspace/shotbyleza run dev` — run the frontend (port assigned by workflow)
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React 18 + Vite, Tailwind CSS v3, shadcn/ui
+- Routing: react-router-dom v6 (BrowserRouter with BASE_URL basename)
+- Email: @emailjs/browser (needs credentials configured — see Gotchas)
+- API: Express 5 (scaffold, not used by frontend currently)
+- DB: PostgreSQL + Drizzle ORM (scaffold, not used currently)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/shotbyleza/` — frontend React app (portfolio site)
+- `artifacts/shotbyleza/src/pages/` — 5 pages: Index, Portfolio, About, Services, Contact, NotFound
+- `artifacts/shotbyleza/src/components/` — Navbar, Footer, PageLayout, home section components, shadcn/ui
+- `artifacts/shotbyleza/src/index.css` — Tailwind v3 + CSS design tokens (black/red/white theme)
+- `artifacts/api-server/` — Express backend scaffold (unused by frontend)
+- `lib/db/` — Drizzle ORM + Postgres scaffold
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Pure frontend portfolio — no Supabase, no database, no auth required
+- Tailwind v3 with postcss config (not @tailwindcss/vite) for compatibility with copied Lovable source
+- BrowserRouter uses `import.meta.env.BASE_URL` as basename for correct path-based proxy routing
+- EmailJS used for contact form (client-side email sending, no backend needed)
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Home page with hero, quick-about, and featured work sections
+- Portfolio page showcasing photography categories
+- About page with photographer bio
+- Services page listing photography packages
+- Contact page with enquiry form (EmailJS)
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Dark cinematic aesthetic: black background (#000), deep red primary (#D1001F), white text
+- Font: Inter (loaded via Google Fonts in index.html)
+- Brand: ShotByLeza, Sydney-based photographer
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Contact form uses EmailJS — needs `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, `VITE_EMAILJS_PUBLIC_KEY` env vars to actually send emails
+- Tailwind v3 uses postcss config (`postcss.config.js` + `tailwind.config.ts`) — do NOT switch to `@tailwindcss/vite`
+- Do NOT run `pnpm dev` at workspace root — run via workflows or `pnpm --filter @workspace/shotbyleza run dev`
 
 ## Pointers
 

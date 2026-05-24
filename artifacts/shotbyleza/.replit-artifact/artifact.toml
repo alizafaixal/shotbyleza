@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ShotByLeza | Sydney Photography"
+version = "1.0.0"
+id = "artifacts/shotbyleza"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19485
+
+[services.development]
+run = "pnpm --filter @workspace/shotbyleza run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/shotbyleza", "run", "build" ]
+publicDir = "artifacts/shotbyleza/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19485"
+BASE_PATH = "/"
