@@ -1,11 +1,25 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { db, inquiriesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { CreateInquiryBody, UpdateInquiryStatusBody, UpdateInquiryStatusParams } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-router.get("/inquiries", async (_req, res) => {
+function requireAdminSecret(req: Request, res: Response, next: NextFunction): void {
+  const secret = process.env.ADMIN_SECRET;
+  if (!secret) {
+    res.status(503).json({ error: "Admin access not configured. Set ADMIN_SECRET env var." });
+    return;
+  }
+  const auth = req.headers.authorization;
+  if (auth !== `Bearer ${secret}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
+
+router.get("/inquiries", requireAdminSecret, async (_req, res) => {
   const rows = await db
     .select()
     .from(inquiriesTable)
@@ -33,7 +47,7 @@ router.post("/inquiries", async (req, res) => {
   res.status(201).json(inquiry);
 });
 
-router.patch("/inquiries/:id", async (req, res) => {
+router.patch("/inquiries/:id", requireAdminSecret, async (req, res) => {
   const { id } = UpdateInquiryStatusParams.parse({ id: Number(req.params.id) });
   const body = UpdateInquiryStatusBody.parse(req.body);
   const [inquiry] = await db

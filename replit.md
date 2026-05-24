@@ -48,9 +48,18 @@ Sydney-based photography portfolio site for ShotByLeza — showcasing travel, po
 - Font: Inter (loaded via Google Fonts in index.html)
 - Brand: ShotByLeza, Sydney-based photographer
 
+## Secrets to configure in Replit Secrets
+
+| Secret | Required | Description |
+|---|---|---|
+| `ADMIN_SECRET` | **Yes — set this now** | Password to access `/admin` dashboard and protect `GET/PATCH /api/inquiries`. Pick any strong password. |
+| `VITE_EMAILJS_PUBLIC_KEY` | Yes (for email) | EmailJS public key — contact form email sending |
+| `VITE_GA4_ID` | Optional | GA4 Measurement ID (`G-XXXXXXXXXX`) — get from Google Analytics → Admin → Data Streams |
+
 ## Gotchas
 
-- Contact form uses EmailJS — needs `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, `VITE_EMAILJS_PUBLIC_KEY` env vars to actually send emails
+- `ADMIN_SECRET` must be set in Replit Secrets or the admin API returns 503. The `/admin` login gate passes this as a Bearer token.
+- Contact form uses EmailJS — needs `VITE_EMAILJS_PUBLIC_KEY` env var to actually send emails (service_1vneowx / template_7l6shd9 already hardcoded)
 - Tailwind v3 uses postcss config (`postcss.config.js` + `tailwind.config.ts`) — do NOT switch to `@tailwindcss/vite`
 - Do NOT run `pnpm dev` at workspace root — run via workflows or `pnpm --filter @workspace/shotbyleza run dev`
 
