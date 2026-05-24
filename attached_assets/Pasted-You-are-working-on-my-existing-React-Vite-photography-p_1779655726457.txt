@@ -1,0 +1,136 @@
+You are working on my existing React/Vite photography portfolio website already connected to GitHub and deployed on Vercel.
+
+IMPORTANT:
+
+* DO NOT rebuild the project
+* DO NOT redesign the UI
+* DO NOT create unnecessary files
+* DO NOT install heavy dependencies unless absolutely required
+* Keep changes minimal and production safe
+* Work incrementally and explain changes before making large edits
+* Reuse existing structure and components
+* Minimize token/credit usage
+
+TASKS:
+
+1. CONNECT TO GITHUB
+
+* Pull the existing GitHub repository into Replit
+* Ensure git push/pull works correctly
+* Keep Vercel deployment connected to GitHub only
+* Do not create a separate deployment pipeline
+
+2. ADD ANALYTICS
+   I need to know:
+
+* where website visitors are coming from
+* whether inquiries come from Google Search, Instagram, direct traffic, referrals, or ads
+* which pages people visit most
+* how many people submit the contact form
+
+Implement:
+
+* Google Analytics 4 (GA4)
+* Google Search Console setup guidance
+* Meta Pixel placeholder support (but do not activate unless keys are added)
+* Track contact form submissions as conversions/events
+
+Create a lightweight admin analytics dashboard/page inside the project that displays:
+
+* total visitors
+* top traffic sources
+* inquiry count
+* conversion rate
+* top pages
+* recent inquiries
+
+If direct Google Analytics API integration is too large/heavy, create a simplified dashboard using stored inquiry data + analytics summaries instead.
+
+3. SEO OPTIMIZATION
+   Improve SEO for a photography/content creator website without redesigning the site.
+
+Implement:
+
+* proper meta titles and descriptions for every main page
+* Open Graph tags for Instagram/Facebook sharing
+* Twitter/X meta tags
+* structured data/schema markup for local business + photography services
+* sitemap.xml generation
+* robots.txt
+* canonical URLs
+* optimized heading structure (H1/H2)
+* image alt text improvements
+* lazy loading for images if missing
+* page speed/performance optimizations where simple
+* keyword-focused metadata for:
+
+  * Sydney photographer
+  * fashion photographer Sydney
+  * event photographer Sydney
+  * couple photography Sydney
+  * content creator Sydney
+  * brand photography Sydney
+
+Also:
+
+* verify Google indexing readiness
+* ensure pages are crawlable
+* prepare the website for better Google ranking
+* provide steps for submitting sitemap to Google Search Console
+
+4. STORE CONTACT FORM SUBMISSIONS
+   Currently the contact form sends directly to email.
+
+I want:
+
+* all inquiries stored in a database/dashboard
+* ability to see all submissions in one place
+* timestamp for each inquiry
+* inquiry status field (new / replied / booked)
+* source tracking if possible (utm_source/referrer)
+
+Use the simplest and cheapest/free solution possible.
+
+Preferred stack:
+
+* Supabase OR Firebase free tier
+* Minimal backend/serverless approach
+* Keep Vercel compatible
+
+5. CONTACT FORM REQUIREMENTS
+   For every submission store:
+
+* name
+* email
+* phone
+* message
+* service type if available
+* page submitted from
+* referrer/traffic source if possible
+* created date
+
+6. SECURITY & PERFORMANCE
+
+* Keep environment variables secure
+* Use .env properly
+* Do not expose keys publicly
+* Keep website fast
+* Avoid large packages
+
+7. FINAL OUTPUT
+   At the end:
+
+* show me every file changed
+* explain how to deploy
+* explain how to connect Google Analytics
+* explain how to connect Google Search Console
+* explain how to access inquiry dashboard
+* explain where submissions are stored
+* explain any required environment variables
+* explain how SEO improvements were implemented
+* generate a README section for setup
+
+IMPORTANT:
+Do NOT refactor unrelated code.
+Do NOT redesign the website.
+Only implement the requested features in the simplest possible way.

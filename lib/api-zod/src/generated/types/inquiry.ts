@@ -5,9 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
 
 export interface Inquiry {
   id: number;
@@ -31,30 +28,3 @@ export interface Inquiry {
   status: string;
   createdAt: string;
 }
-
-export interface InquiryInput {
-  name: string;
-  email: string;
-  instagram?: string;
-  shootType?: string;
-  message: string;
-  pageSource?: string;
-  referrer?: string;
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-}
-
-export type InquiryStatusInputStatus = typeof InquiryStatusInputStatus[keyof typeof InquiryStatusInputStatus];
-
-
-export const InquiryStatusInputStatus = {
-  new: 'new',
-  replied: 'replied',
-  booked: 'booked',
-} as const;
-
-export interface InquiryStatusInput {
-  status: InquiryStatusInputStatus;
-}
-

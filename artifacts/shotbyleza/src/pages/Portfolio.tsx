@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import { X, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 declare global {
   interface Window {
@@ -159,6 +160,11 @@ const Portfolio = () => {
 
   return (
     <PageLayout>
+      <SEO
+        title="Portfolio | ShotByLeza – Sydney Photography & Content"
+        description="Browse ShotByLeza's photography portfolio — events, club nights, fashion, models, couples, and brand content captured in Sydney and beyond."
+        canonical="https://shotbyleza.com.au/Portfolio"
+      />
       <section className="pt-32 pb-16 bg-background">
         <div className="container mx-auto px-6 text-center">
           <motion.div

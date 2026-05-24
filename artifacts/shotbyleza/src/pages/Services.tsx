@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageLayout from "@/components/PageLayout";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import {
   Camera,
   Calendar,
@@ -318,6 +319,11 @@ const Services = () => {
 
   return (
     <PageLayout>
+      <SEO
+        title="Photography Services & Pricing | ShotByLeza Sydney"
+        description="Explore ShotByLeza's photography packages: model portfolios, events, club photography, fashion & e-commerce, couples, family, and headshots. Sydney-based. Book now."
+        canonical="https://shotbyleza.com.au/services"
+      />
       <section className="pt-32 pb-16 bg-background">
         <div className="container mx-auto px-6 text-center">
           <motion.div

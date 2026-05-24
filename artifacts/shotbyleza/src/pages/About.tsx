@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageLayout from "@/components/PageLayout";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Camera, Globe, Heart } from "lucide-react";
 import {
   fadeLeft,
@@ -14,6 +15,11 @@ import {
 const About = () => {
   return (
     <PageLayout>
+      <SEO
+        title="About Aliza | ShotByLeza – Sydney Photographer & Content Creator"
+        description="Meet Aliza, the Sydney-based photographer behind ShotByLeza. Capturing real emotions and authentic stories through portraits, events, fashion, and travel photography."
+        canonical="https://shotbyleza.com.au/about"
+      />
       <section className="pt-32 pb-16 bg-background">
         <div className="container mx-auto px-6">
           <motion.div

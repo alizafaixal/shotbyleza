@@ -21,6 +21,9 @@ import {
   staggerContainer,
   viewportOnce,
 } from "@/lib/motion";
+import { SEO } from "@/components/SEO";
+import { useCreateInquiry } from "@workspace/api-client-react";
+import { trackEvent, getUTMParams } from "@/lib/analytics";
 
 const shootTypes = [
   "Model Portfolio",
@@ -57,6 +60,7 @@ const featuredReviews = [
 
 const Contact = () => {
   const { toast } = useToast();
+  const createInquiry = useCreateInquiry();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -71,36 +75,55 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const utmParams = getUTMParams();
+
     try {
-      await emailjs.send(
-        "service_1vneowx",
-        "template_7l6shd9",
-        {
+      // Store inquiry in database
+      await createInquiry.mutateAsync({
+        data: {
           name: formData.name,
           email: formData.email,
-          instagram: formData.instagram,
-          shootType: formData.shootType,
+          instagram: formData.instagram || undefined,
+          shootType: formData.shootType || undefined,
           message: formData.message,
+          pageSource: "/contact",
+          referrer: document.referrer || undefined,
+          utmSource: utmParams.utmSource,
+          utmMedium: utmParams.utmMedium,
+          utmCampaign: utmParams.utmCampaign,
         },
-        {
-          publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-        }
-      );
+      });
+
+      // Send email via EmailJS (keep existing behaviour)
+      if (import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+        await emailjs.send(
+          "service_1vneowx",
+          "template_7l6shd9",
+          {
+            name: formData.name,
+            email: formData.email,
+            instagram: formData.instagram,
+            shootType: formData.shootType,
+            message: formData.message,
+          },
+          { publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY }
+        );
+      }
+
+      // GA4 conversion event
+      trackEvent("contact_form_submission", {
+        shoot_type: formData.shootType || "not_specified",
+        utm_source: utmParams.utmSource,
+      });
 
       toast({
         title: "Message sent!",
         description: "Thanks for reaching out! I'll get back to you soon.",
       });
 
-      setFormData({
-        name: "",
-        email: "",
-        instagram: "",
-        shootType: "",
-        message: "",
-      });
+      setFormData({ name: "", email: "", instagram: "", shootType: "", message: "" });
     } catch (error) {
-      console.error("EmailJS error:", error);
+      console.error("Form submission error:", error);
       toast({
         title: "Something went wrong",
         description: "Please try again or email me directly.",
@@ -112,6 +135,11 @@ const Contact = () => {
 
   return (
     <PageLayout>
+      <SEO
+        title="Book a Shoot | ShotByLeza – Contact Sydney Photographer"
+        description="Get in touch with ShotByLeza to book a photography session in Sydney. Specialising in model portfolios, events, couples, fashion, and brand shoots. Replies within 24 hours."
+        canonical="https://shotbyleza.com.au/contact"
+      />
       <section className="pt-32 pb-16 bg-background">
         <div className="container mx-auto px-6 text-center">
           <motion.div variants={fadeUp} initial="hidden" animate="show">
