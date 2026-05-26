@@ -13,6 +13,14 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function GoogleVerification() {
+  return (
+    <div style={{ fontFamily: "monospace", padding: "1rem" }}>
+      google-site-verification: google7c6b98f01a034f58.html
+    </div>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -26,6 +34,7 @@ const App = () => (
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/google7c6b98f01a034f58.html" element={<GoogleVerification />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -316,10 +316,10 @@ function MediaTab({ token }: { token: string }) {
 
   const patchImage = async (imagePath: string, body: Record<string, unknown>) => {
     setSaving(imagePath);
-    await fetch(`/api/portfolio/images/${imagePath}`, {
+    await fetch(`/api/portfolio/images`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ imagePath, ...body }),
     });
     setSaving(null);
     fetchImages();

@@ -20,13 +20,14 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
       </div>
 
-      {/* floating accents – pointer-events-none so they never block scroll */}
+      {/* floating accents – pointer-events-none so they never block scroll; will-change keeps them on their own compositor layer */}
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-32 left-[10%] hidden lg:block z-10 pointer-events-none"
+        style={{ willChange: "transform", transform: "translateZ(0)" }}
       >
-        <div className="rounded-full border border-white/10 bg-white/5 backdrop-blur-md px-4 py-2 text-xs tracking-[0.25em] uppercase text-white/70">
+        <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs tracking-[0.25em] uppercase text-white/70">
           Sydney Based
         </div>
       </motion.div>
@@ -35,8 +36,9 @@ const Hero = () => {
         animate={{ y: [0, 12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
         className="absolute bottom-36 right-[10%] hidden lg:block z-10 pointer-events-none"
+        style={{ willChange: "transform", transform: "translateZ(0)" }}
       >
-        <div className="rounded-full border border-primary/20 bg-primary/10 backdrop-blur-md px-4 py-2 text-xs tracking-[0.25em] uppercase text-primary">
+        <div className="rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs tracking-[0.25em] uppercase text-primary">
           Photo • Reel • Story
         </div>
       </motion.div>

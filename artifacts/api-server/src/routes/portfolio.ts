@@ -57,15 +57,16 @@ router.get("/portfolio/images", async (_req: Request, res: Response) => {
   }
 });
 
-// PATCH /api/portfolio/images/:path — admin only, update override
-router.patch("/portfolio/images/*imagePath", requireAdmin, async (req: Request, res: Response) => {
-  const imagePath = req.params.imagePath as string;
-  const { customTitle, caption, hidden, sortOrder } = req.body as {
+// PATCH /api/portfolio/images — admin only, update override (imagePath in body to avoid wildcard routing issues)
+router.patch("/portfolio/images", requireAdmin, async (req: Request, res: Response) => {
+  const { imagePath, customTitle, caption, hidden, sortOrder } = req.body as {
+    imagePath?: string;
     customTitle?: string;
     caption?: string;
     hidden?: boolean;
     sortOrder?: number;
   };
+  if (!imagePath) { res.status(400).json({ error: "imagePath is required" }); return; }
 
   try {
     const existing = await db
@@ -111,7 +112,50 @@ router.patch("/portfolio/images/*imagePath", requireAdmin, async (req: Request, 
   }
 });
 
-// POST /api/portfolio/upload — admin only, upload new image to object storage
+const SIDECAR = "http://127.0.0.1:1106";
+
+async function uploadToObjectStorage(buffer: Buffer, mimeType: string, objectName: string, bucketId: string): Promise<string> {
+  // Step 1: get a signed PUT URL from the Replit sidecar
+  const signRes = await fetch(`${SIDECAR}/object-storage/signed-object-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bucket_name: bucketId,
+      object_name: objectName,
+      method: "PUT",
+      expires_at: new Date(Date.now() + 300_000).toISOString(),
+    }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!signRes.ok) throw new Error(`Sidecar signed URL failed: ${signRes.status}`);
+  const { signed_url: signedUrl } = await signRes.json() as { signed_url: string };
+
+  // Step 2: PUT the file via the signed URL
+  const putRes = await fetch(signedUrl, {
+    method: "PUT",
+    headers: { "Content-Type": mimeType },
+    body: buffer,
+    signal: AbortSignal.timeout(60_000),
+  });
+  if (!putRes.ok) throw new Error(`GCS PUT failed: ${putRes.status}`);
+
+  // Step 3: get a long-lived signed read URL (7 days) to serve the image
+  const readSignRes = await fetch(`${SIDECAR}/object-storage/signed-object-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bucket_name: bucketId,
+      object_name: objectName,
+      method: "GET",
+      expires_at: new Date(Date.now() + 7 * 24 * 3600_000).toISOString(),
+    }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!readSignRes.ok) throw new Error(`Sidecar read URL failed: ${readSignRes.status}`);
+  const { signed_url: readUrl } = await readSignRes.json() as { signed_url: string };
+  return readUrl;
+}
+
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 router.post("/portfolio/upload", requireAdmin, upload.single("file"), async (req: Request, res: Response) => {
@@ -126,14 +170,11 @@ router.post("/portfolio/upload", requireAdmin, upload.single("file"), async (req
   const ext = file.originalname.split(".").pop() ?? "webp";
   const storageName = `portfolio/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   try {
-    const bucket = objectStorageClient.bucket(bucketId);
-    const gcsFile = bucket.file(storageName);
-    await gcsFile.save(file.buffer, { contentType: file.mimetype });
-    await gcsFile.makePublic();
-    const publicUrl = `https://storage.googleapis.com/${bucketId}/${storageName}`;
-    res.json({ storagePath: publicUrl, storageName });
+    const storagePath = await uploadToObjectStorage(file.buffer, file.mimetype, storageName, bucketId);
+    res.json({ storagePath, storageName });
   } catch (err) {
-    res.status(500).json({ error: "Upload to object storage failed" });
+    const msg = err instanceof Error ? err.message : "unknown error";
+    res.status(500).json({ error: `Upload failed: ${msg}` });
   }
 });
 
