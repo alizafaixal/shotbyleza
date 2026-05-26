@@ -1,0 +1,128 @@
+Please update my ShotByLeza website and show me exactly which files/components you changed.
+
+IMPORTANT DETAILS:
+Current Replit site URL:
+https://shotbyleza--alizafaixal.replit.app/
+
+Google Maps business profile link:
+https://maps.app.goo.gl/jKB49o6xDG6L6PSZ6
+
+Business name:
+shotbyleza
+
+Category:
+Photographer
+
+Location:
+New South Wales / Sydney area
+
+Website currently linked on Google Maps:
+https://shotbyleza.vercel.app
+
+Google Analytics GA4 Measurement ID:
+G-62F4ZWRHCK
+
+Google Places API key:
+I will add this in Replit Secrets as GOOGLE_PLACES_API_KEY.
+
+Google Search Console verification:
+I have the HTML verification file named:
+google7c6b98f01a034f58.html
+
+Please do all of the following:
+
+1. Google Analytics setup for the Replit website
+- Update the website so GA4 tracks the Replit URL:
+  https://shotbyleza--alizafaixal.replit.app/
+- Use this GA4 Measurement ID:
+  G-62F4ZWRHCK
+- Store it as:
+  VITE_GA4_ID=G-62F4ZWRHCK
+- Confirm where the GA script is loaded in the code.
+- Confirm that page views are being tracked.
+- If the old Vercel URL is hardcoded anywhere for analytics, update it to the Replit URL.
+
+2. Google Search Console verification
+- Add the Google Search Console verification HTML file to the correct public/root directory so it is accessible at:
+  https://shotbyleza--alizafaixal.replit.app/google7c6b98f01a034f58.html
+- Do not remove this file after verification.
+- Tell me exactly where you placed the file.
+- Also check if any Search Console meta tag exists and tell me where.
+
+3. Analytics/Search dashboard inside admin
+- Check if an admin analytics dashboard already exists.
+- Tell me the exact route/path where I can access it.
+- If it does not exist, create an admin-only analytics dashboard inside the app.
+- The dashboard should show:
+  - GA4 setup status
+  - current Measurement ID
+  - Search Console verification status
+  - whether real analytics API credentials are connected
+- Do not fake visitor/search numbers.
+- If real GA/Search Console API integration is not available yet, show a setup/instructions state instead.
+
+4. Google Reviews from Google Business Profile
+- Replace the static Google Reviews section with live Google reviews using Google Places API.
+- Use backend/server API route only. Do not expose the API key in frontend code.
+- Use Replit Secrets:
+  GOOGLE_PLACES_API_KEY
+  GOOGLE_PLACE_ID
+- Since Place ID Finder is not finding my business, use this Google Maps link to find/extract the Place ID, or use Places API Text Search:
+  https://maps.app.goo.gl/jKB49o6xDG6L6PSZ6
+- Create/update endpoint:
+  /api/google-reviews
+- Fetch:
+  - business rating
+  - total review count
+  - reviewer name
+  - rating
+  - review text
+  - relative time/date
+- Add loading, error, and static fallback states.
+- Tell me clearly whether Google Places API returns all reviews or only limited public reviews.
+
+5. Portfolio/Homepage image management dashboard
+- Create an admin-only media/portfolio dashboard.
+- Show all current images used on the website:
+  - homepage hero images
+  - portfolio images
+  - service images if any
+- For each image, show:
+  - preview
+  - current filename/path
+  - page/section where used
+  - category/tag
+  - title/caption if any
+- Allow me to:
+  - upload a new image
+  - replace an existing image
+  - delete/hide image
+  - update category/title/caption
+  - reorder portfolio images
+- Make sure uploaded images persist after deployment.
+- If database or persistent storage is needed, tell me the best Replit-compatible option before implementing.
+
+6. Portfolio card labels
+- Remove placeholder labels/subtext like:
+  Club 1, Club 2, Club 3
+- Keep the portfolio images/cards clean.
+
+7. Homepage scroll issue
+- Fix the issue where users cannot scroll normally from the homepage hero section.
+- Check:
+  - scroll indicator
+  - overlays
+  - fixed elements
+  - z-index
+  - pointer-events
+  - hero height
+  - scroll locking
+- After fixing, tell me exactly what was blocking scroll and what code changed.
+
+8. Final confirmation
+After changes, confirm the final routes/URLs for:
+- inquiries/admin dashboard
+- analytics dashboard
+- media/image dashboard
+- Google reviews API endpoint
+- Search Console verification file URL

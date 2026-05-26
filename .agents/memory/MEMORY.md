@@ -1,0 +1,4 @@
+- [Express 5 wildcard routes](express5-wildcard-routes.md) — path-to-regexp v8 uses `*name` not `:param(*)` for wildcards in Express 5.
+- [API server zod imports](api-server-zod.md) — api-server cannot import `zod` or `zod/v4` directly; only packages that bundle it (like @workspace/db) work.
+- [Object storage setup](object-storage-setup.md) — bucket provisioned; skill templates copied to api-server; multer used for direct upload (not presigned URLs) due to auth constraints.
+- [Portfolio media management](portfolio-media-mgmt.md) — portfolio_overrides DB table stores hide/caption/storagePath per image path; Portfolio.tsx fetches /api/portfolio/images with static fallback.

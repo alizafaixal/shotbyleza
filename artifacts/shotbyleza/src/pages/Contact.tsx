@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import { Button } from "@/components/ui/button";
@@ -38,25 +38,147 @@ const shootTypes = [
 ];
 
 const googleReviewsLink =
-  "https://www.google.com/search?sca_esv=6b4ddb55862f8c40&hl=en-AU&sxsrf=ANbL-n6dps65EX4WmzrZxsdvMg4IOtNB5Q:1772947735992&kgmid=/g/11z1xtf076&q=shotbyleza&shndl=30&source=sh/x/loc/uni/m1/1&kgs=ad90e9fb572993ba&shem=shrtsdl&utm_source=shrtsdl,sh/x/loc/uni/m1/1&sei=kQ-tae3SLObm2roPh6yJ-Ag#mpd=~13490776049045509526/customers/reviews&lrd=0x24cc0d7a369a62e1:0x86bf0923a7b9c833,1,,,,";
+  "https://www.google.com/search?sca_esv=6b4ddb55862f8c40&hl=en-AU&kgmid=/g/11z1xtf076&q=shotbyleza#lrd=0x24cc0d7a369a62e1:0x86bf0923a7b9c833,1,,,,";
 
-const featuredReviews = [
+const staticReviews = [
   {
     name: "Eiman Rana",
     rating: 5,
     text: "Leza is extremely talented and very professional. Lovely to work with and absolutely loved her content. definitely recommend hiring her for photoshoots and videography!",
+    relativeTime: "",
+    photoUrl: "",
   },
   {
     name: "Aashna Shrishrimal",
     rating: 5,
     text: "I met Aliza when I was initially starting out to do freelance modelling and had a great experience with the shoot. She made me feel comfortable and gave me directions. The photos turned out great! and since then have collaborated on 3 more shoots which have all gone smoothly and helped me be more confident!",
+    relativeTime: "",
+    photoUrl: "",
   },
   {
     name: "Basma Khalid",
     rating: 5,
-    text: "had an incredible experience with shotbyleza. She is an exceptionally talented fashion and portrait photographer with a great eye for detail, lighting, and composition. From the moment we started the shoot, she made the whole experience feel relaxed and enjoyable while still being very professional.Her ability to direct poses and capture flattering angles is amazing, and the final photos looked absolutely stunning. You can really see her passion for fashion photography and portrait photography in her work.If you’re looking for a skilled fashion or portrait photographer in Sydney, I highly recommend shotbyleza.",
+    text: "had an incredible experience with shotbyleza. She is an exceptionally talented fashion and portrait photographer with a great eye for detail, lighting, and composition. From the moment we started the shoot, she made the whole experience feel relaxed and enjoyable while still being very professional. Her ability to direct poses and capture flattering angles is amazing, and the final photos looked absolutely stunning. You can really see her passion for fashion photography and portrait photography in her work. If you're looking for a skilled fashion or portrait photographer in Sydney, I highly recommend shotbyleza.",
+    relativeTime: "",
+    photoUrl: "",
   },
 ];
+
+interface LiveReview {
+  name: string;
+  rating: number;
+  text: string;
+  relativeTime: string;
+  photoUrl?: string;
+}
+
+interface GoogleReviewsData {
+  configured: boolean;
+  rating?: number;
+  totalReviews?: number;
+  reviews?: LiveReview[];
+}
+
+function GoogleReviewsSection() {
+  const [data, setData] = useState<GoogleReviewsData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/google-reviews")
+      .then((r) => r.json())
+      .then((d: GoogleReviewsData) => { setData(d); setLoading(false); })
+      .catch(() => { setData(null); setLoading(false); });
+  }, []);
+
+  const useLive = !loading && !!data?.configured && (data.reviews?.length ?? 0) > 0;
+  const reviews: LiveReview[] = useLive ? (data!.reviews ?? []) : staticReviews;
+  const rating = useLive ? (data!.rating ?? 5.0) : 5.0;
+  const totalLabel = useLive ? `${data!.totalReviews ?? "10+"}` : "10+";
+
+  return (
+    <div className="bg-secondary border border-border rounded-2xl p-6">
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <div>
+          <h3 className="text-xl font-display font-semibold text-foreground">
+            Google Reviews
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {useLive ? "Live from Google" : "Real client feedback from Google"}
+          </p>
+        </div>
+        <div className="text-right">
+          <div className="flex items-center justify-end gap-1 text-primary">
+            <Star className="w-4 h-4 fill-current" />
+            <span className="font-semibold text-foreground">
+              {typeof rating === "number" ? rating.toFixed(1) : String(rating)}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">{totalLabel} Google reviews</p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="space-y-3">
+          {[1, 2].map((n) => (
+            <div key={n} className="border border-border rounded-xl p-4 bg-background animate-pulse">
+              <div className="h-3 bg-secondary rounded w-1/3 mb-3" />
+              <div className="h-3 bg-secondary rounded w-full mb-1" />
+              <div className="h-3 bg-secondary rounded w-4/5" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="space-y-4"
+        >
+          {reviews.map((review, index) => (
+            <motion.div
+              key={`${review.name}-${index}`}
+              variants={fadeUp}
+              className="border border-border rounded-xl p-4 bg-background"
+            >
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  {review.photoUrl && (
+                    <img
+                      src={review.photoUrl}
+                      alt={review.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{review.name}</p>
+                    {review.relativeTime && (
+                      <p className="text-xs text-muted-foreground">{review.relativeTime}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-primary">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span className="text-sm font-medium text-foreground">{review.rating}</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">{review.text}</p>
+            </motion.div>
+          ))}
+
+          <a
+            href={googleReviewsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-primary font-medium hover:underline pt-2"
+          >
+            Read more on Google →
+          </a>
+        </motion.div>
+      )}
+    </div>
+  );
+}
 
 const Contact = () => {
   const { toast } = useToast();
@@ -78,7 +200,6 @@ const Contact = () => {
     const utmParams = getUTMParams();
 
     try {
-      // Store inquiry in database
       await createInquiry.mutateAsync({
         data: {
           name: formData.name,
@@ -94,7 +215,6 @@ const Contact = () => {
         },
       });
 
-      // Send email via EmailJS (keep existing behaviour)
       if (import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
         await emailjs.send(
           "service_1vneowx",
@@ -110,7 +230,6 @@ const Contact = () => {
         );
       }
 
-      // GA4 conversion event
       trackEvent("contact_form_submission", {
         shoot_type: formData.shootType || "not_specified",
         utm_source: utmParams.utmSource,
@@ -319,72 +438,7 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="bg-secondary border border-border rounded-2xl p-6">
-                <div className="flex items-center justify-between gap-4 mb-5">
-                  <div>
-                    <h3 className="text-xl font-display font-semibold text-foreground">
-                      Google Reviews
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Real client feedback from Google
-                    </p>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="flex items-center justify-end gap-1 text-primary">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="font-semibold text-foreground">5.0</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      10+ Google reviews
-                    </p>
-                  </div>
-                </div>
-
-                <motion.div
-                  variants={staggerContainer}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={viewportOnce}
-                  className="space-y-4"
-                >
-                  {featuredReviews.map((review, index) => (
-                    <motion.div
-                      key={`${review.name}-${index}`}
-                      variants={fadeUp}
-                      className="border border-border rounded-xl p-4 bg-background"
-                    >
-                      <div className="flex items-center justify-between gap-3 mb-3">
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {review.name}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-1 text-primary">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span className="text-sm font-medium text-foreground">
-                            {review.rating}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {review.text}
-                      </p>
-                    </motion.div>
-                  ))}
-
-                  <a
-                    href={googleReviewsLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-primary font-medium hover:underline pt-2"
-                  >
-                    Read more on Google →
-                  </a>
-                </motion.div>
-              </div>
+              <GoogleReviewsSection />
             </motion.div>
           </div>
         </div>

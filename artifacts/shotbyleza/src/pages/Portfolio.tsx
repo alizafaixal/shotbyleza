@@ -128,11 +128,41 @@ const portfolioVideos = [
   },
 ];
 
+interface ApiImage {
+  imagePath: string;
+  category: string;
+  src: string;
+  hidden: boolean;
+  customTitle: string | null;
+  caption: string | null;
+}
+
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState(categories[0].label);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [apiImages, setApiImages] = useState<ApiImage[] | null>(null);
 
-  const filteredImages = portfolioImages.filter(
+  useEffect(() => {
+    fetch("/api/portfolio/images")
+      .then((r) => r.json())
+      .then((data: ApiImage[]) => setApiImages(data))
+      .catch(() => setApiImages(null));
+  }, []);
+
+  // Use API data if available (supports hidden/custom overrides), else fall back to static
+  const effectiveImages =
+    apiImages !== null
+      ? apiImages
+          .filter((img) => !img.hidden)
+          .map((img) => ({
+            id: img.imagePath.replace("/", "-"),
+            src: img.src,
+            category: img.category,
+            title: img.customTitle ?? img.imagePath,
+          }))
+      : portfolioImages;
+
+  const filteredImages = effectiveImages.filter(
     (img) => img.category === activeCategory
   );
 
@@ -239,12 +269,9 @@ const Portfolio = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
-                    <p className="text-primary text-xs font-medium tracking-widest uppercase mb-1">
+                    <p className="text-primary text-xs font-medium tracking-widest uppercase">
                       {image.category}
                     </p>
-                    <h3 className="text-foreground text-lg font-medium">
-                      {image.title}
-                    </h3>
                   </div>
                 </motion.div>
               ))}

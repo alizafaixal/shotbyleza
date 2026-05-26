@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 const Hero = () => {
   const coverImage = "/assets/images/cover.jpg";
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0">
+    <section className="relative min-h-screen flex items-center justify-center">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <div
           className="w-full h-full"
           style={{
@@ -20,11 +20,11 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
       </div>
 
-      {/* floating accents */}
+      {/* floating accents – pointer-events-none so they never block scroll */}
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-32 left-[10%] hidden lg:block z-10"
+        className="absolute top-32 left-[10%] hidden lg:block z-10 pointer-events-none"
       >
         <div className="rounded-full border border-white/10 bg-white/5 backdrop-blur-md px-4 py-2 text-xs tracking-[0.25em] uppercase text-white/70">
           Sydney Based
@@ -34,7 +34,7 @@ const Hero = () => {
       <motion.div
         animate={{ y: [0, 12, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-36 right-[10%] hidden lg:block z-10"
+        className="absolute bottom-36 right-[10%] hidden lg:block z-10 pointer-events-none"
       >
         <div className="rounded-full border border-primary/20 bg-primary/10 backdrop-blur-md px-4 py-2 text-xs tracking-[0.25em] uppercase text-primary">
           Photo • Reel • Story
@@ -137,7 +137,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.1, duration: 0.7 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
