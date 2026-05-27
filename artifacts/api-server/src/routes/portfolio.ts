@@ -1,9 +1,13 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
+import path from "path";
+import fs from "fs";
 import { db, portfolioOverridesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import multer from "multer";
-import { objectStorageClient } from "../lib/objectStorage";
+
+const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const router = Router();
 
@@ -112,68 +116,22 @@ router.patch("/portfolio/images", requireAdmin, async (req: Request, res: Respon
   }
 });
 
-const SIDECAR = "http://127.0.0.1:1106";
-
-async function uploadToObjectStorage(buffer: Buffer, mimeType: string, objectName: string, bucketId: string): Promise<string> {
-  // Step 1: get a signed PUT URL from the Replit sidecar
-  const signRes = await fetch(`${SIDECAR}/object-storage/signed-object-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      bucket_name: bucketId,
-      object_name: objectName,
-      method: "PUT",
-      expires_at: new Date(Date.now() + 300_000).toISOString(),
-    }),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!signRes.ok) throw new Error(`Sidecar signed URL failed: ${signRes.status}`);
-  const { signed_url: signedUrl } = await signRes.json() as { signed_url: string };
-
-  // Step 2: PUT the file via the signed URL
-  const putRes = await fetch(signedUrl, {
-    method: "PUT",
-    headers: { "Content-Type": mimeType },
-    body: buffer,
-    signal: AbortSignal.timeout(60_000),
-  });
-  if (!putRes.ok) throw new Error(`GCS PUT failed: ${putRes.status}`);
-
-  // Step 3: get a long-lived signed read URL (7 days) to serve the image
-  const readSignRes = await fetch(`${SIDECAR}/object-storage/signed-object-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      bucket_name: bucketId,
-      object_name: objectName,
-      method: "GET",
-      expires_at: new Date(Date.now() + 7 * 24 * 3600_000).toISOString(),
-    }),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!readSignRes.ok) throw new Error(`Sidecar read URL failed: ${readSignRes.status}`);
-  const { signed_url: readUrl } = await readSignRes.json() as { signed_url: string };
-  return readUrl;
-}
-
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 router.post("/portfolio/upload", requireAdmin, upload.single("file"), async (req: Request, res: Response) => {
-  const bucketId = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-  if (!bucketId) {
-    res.status(503).json({ error: "Object storage not configured. Set DEFAULT_OBJECT_STORAGE_BUCKET_ID." });
-    return;
-  }
   const file = (req as Request & { file?: Express.Multer.File }).file;
   if (!file) { res.status(400).json({ error: "No file provided" }); return; }
 
-  const ext = file.originalname.split(".").pop() ?? "webp";
-  const storageName = `portfolio/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const ext = file.originalname.split(".").pop()?.toLowerCase() ?? "jpg";
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const filePath = path.join(UPLOADS_DIR, fileName);
+
   try {
-    const storagePath = await uploadToObjectStorage(file.buffer, file.mimetype, storageName, bucketId);
-    res.json({ storagePath, storageName });
+    await fs.promises.writeFile(filePath, file.buffer);
+    const storagePath = `/api/uploads/${fileName}`;
+    res.json({ storagePath, fileName });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "unknown error";
+    const msg = err instanceof Error ? err.message : "unknown";
     res.status(500).json({ error: `Upload failed: ${msg}` });
   }
 });

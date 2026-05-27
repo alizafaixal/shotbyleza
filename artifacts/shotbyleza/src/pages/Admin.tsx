@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Star, Upload, Eye, EyeOff, ChevronDown, ExternalLink, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
 type InquiryStatus = "new" | "replied" | "booked";
-type Tab = "inquiries" | "analytics" | "media";
+type Tab = "inquiries" | "analytics" | "media" | "content";
 
 const STATUS_COLORS: Record<string, string> = {
   new: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -284,13 +284,204 @@ function AnalyticsTab() {
   );
 }
 
+const DEFAULT_FEATURED_PATHS = ["model/1.webp","events/10.webp","fashion/1.webp","portraits/1.webp","club/1.webp","model/2.webp"];
+
 interface PortfolioImage {
   imagePath: string;
   category: string;
   src: string;
+  storagePath?: string | null;
   hidden: boolean;
   customTitle: string | null;
   caption: string | null;
+}
+
+function ContentTab({ token }: { token: string }) {
+  const [heroTagline, setHeroTagline] = useState("Stories in frames. Moments in motion.");
+  const [heroSubtitle, setHeroSubtitle] = useState("Photography & Content Creation");
+  const [bio1, setBio1] = useState("A Sydney-based photographer and content creator capturing real emotions, unscripted energy, and real stories. From fashion shows to event chaos to quiet portrait moments and brand work, I create visuals that feel alive.");
+  const [bio2, setBio2] = useState("Photography for me isn't just about capturing what's in front of the lens — it's about freezing a feeling, a vibe, a moment that tells a story even years later.");
+  const [bio3, setBio3] = useState("Whether I'm documenting the raw energy of a packed dance floor, the intimate connection in a portrait session, or the breathtaking landscapes I discover while traveling, my goal remains the same: to create images that move you.");
+  const [allImages, setAllImages] = useState<PortfolioImage[]>([]);
+  const [featuredPaths, setFeaturedPaths] = useState<string[]>(DEFAULT_FEATURED_PATHS);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<Record<string, boolean>>({});
+  const [saved, setSaved] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/site-settings").then((r) => (r.ok ? r.json() : {})),
+      fetch("/api/portfolio/images").then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([settings, images]: [Record<string, string>, PortfolioImage[]]) => {
+        if (settings.hero_tagline) setHeroTagline(settings.hero_tagline);
+        if (settings.hero_subtitle) setHeroSubtitle(settings.hero_subtitle);
+        if (settings.about_bio_1) setBio1(settings.about_bio_1);
+        if (settings.about_bio_2) setBio2(settings.about_bio_2);
+        if (settings.about_bio_3) setBio3(settings.about_bio_3);
+        if (settings.featured_images) setFeaturedPaths(JSON.parse(settings.featured_images) as string[]);
+        setAllImages(images.filter((i) => !i.hidden));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const patchSetting = async (key: string, value: string) => {
+    await fetch("/api/site-settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ key, value }),
+    });
+  };
+
+  const saveSection = async (section: string, pairs: [string, string][]) => {
+    setSaving((s) => ({ ...s, [section]: true }));
+    try {
+      await Promise.all(pairs.map(([k, v]) => patchSetting(k, v)));
+      setSaved((s) => ({ ...s, [section]: true }));
+      setTimeout(() => setSaved((s) => ({ ...s, [section]: false })), 2500);
+    } finally {
+      setSaving((s) => ({ ...s, [section]: false }));
+    }
+  };
+
+  const toggleFeatured = (imagePath: string) => {
+    setFeaturedPaths((prev) => {
+      if (prev.includes(imagePath)) return prev.filter((p) => p !== imagePath);
+      if (prev.length >= 6) return prev;
+      return [...prev, imagePath];
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24 text-muted-foreground">
+        Loading content settings…
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Hero Text */}
+      <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-foreground">Hero Section Text</h2>
+        <p className="text-sm text-muted-foreground">Changes appear on the homepage after a page reload.</p>
+        <div className="space-y-3">
+          <div>
+            <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1">Subtitle (small red text above the logo name)</label>
+            <input
+              type="text"
+              value={heroSubtitle}
+              onChange={(e) => setHeroSubtitle(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1">Tagline (italic line below the name)</label>
+            <input
+              type="text"
+              value={heroTagline}
+              onChange={(e) => setHeroTagline(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+        </div>
+        <button
+          onClick={() => saveSection("hero", [["hero_tagline", heroTagline], ["hero_subtitle", heroSubtitle]])}
+          disabled={saving.hero}
+          className="px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          {saving.hero ? "Saving…" : saved.hero ? "Saved ✓" : "Save Hero Text"}
+        </button>
+      </div>
+
+      {/* About Bio */}
+      <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-foreground">About Me Bio</h2>
+        <p className="text-sm text-muted-foreground">Paragraphs 1 & 2 appear on both the Home page and the About page. Paragraph 3 appears on the About page only.</p>
+        {(
+          [
+            { label: "Bio paragraph 1", val: bio1, set: setBio1 },
+            { label: "Bio paragraph 2", val: bio2, set: setBio2 },
+            { label: "Bio paragraph 3 (About page only)", val: bio3, set: setBio3 },
+          ] as { label: string; val: string; set: (v: string) => void }[]
+        ).map(({ label, val, set }) => (
+          <div key={label}>
+            <label className="text-xs text-muted-foreground uppercase tracking-wide block mb-1">{label}</label>
+            <textarea
+              value={val}
+              onChange={(e) => set(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            />
+          </div>
+        ))}
+        <button
+          onClick={() => saveSection("bio", [["about_bio_1", bio1], ["about_bio_2", bio2], ["about_bio_3", bio3]])}
+          disabled={saving.bio}
+          className="px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          {saving.bio ? "Saving…" : saved.bio ? "Saved ✓" : "Save Bio Text"}
+        </button>
+      </div>
+
+      {/* Featured Projects */}
+      <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">Featured Projects</h2>
+          <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${featuredPaths.length >= 6 ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"}`}>
+            {featuredPaths.length} / 6 selected
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Select up to 6 images to feature on the home page. Click to toggle selection. The order shown here is the display order.
+        </p>
+        {allImages.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No portfolio images found.</p>
+        ) : (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-[440px] overflow-y-auto pr-1">
+            {allImages.map((img) => {
+              const isFeatured = featuredPaths.includes(img.imagePath);
+              const featuredIndex = featuredPaths.indexOf(img.imagePath);
+              const isDisabled = !isFeatured && featuredPaths.length >= 6;
+              return (
+                <button
+                  key={img.imagePath}
+                  onClick={() => !isDisabled && toggleFeatured(img.imagePath)}
+                  title={img.imagePath}
+                  className={`relative aspect-[3/4] rounded-lg overflow-hidden border-2 transition-all ${
+                    isFeatured ? "border-primary ring-1 ring-primary/50" : "border-transparent opacity-50"
+                  } ${isDisabled ? "cursor-not-allowed" : "cursor-pointer hover:opacity-80"}`}
+                >
+                  <img
+                    src={img.storagePath ?? img.src}
+                    alt={img.imagePath}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {isFeatured && (
+                    <div className="absolute inset-0 bg-primary/20 flex items-start justify-end p-1">
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-white text-[10px] font-bold leading-none">{featuredIndex + 1}</span>
+                      </div>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        <button
+          onClick={() => saveSection("featured", [["featured_images", JSON.stringify(featuredPaths)]])}
+          disabled={saving.featured}
+          className="px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          {saving.featured ? "Saving…" : saved.featured ? "Saved ✓" : "Save Featured Selection"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function MediaTab({ token }: { token: string }) {
@@ -528,18 +719,18 @@ function Dashboard({ token }: { token: string }) {
           </button>
         </div>
 
-        <div className="flex gap-1 border-b border-border mb-8">
-          {(["inquiries", "analytics", "media"] as Tab[]).map((tab) => (
+        <div className="flex gap-1 border-b border-border mb-8 overflow-x-auto">
+          {(["inquiries", "analytics", "media", "content"] as Tab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2.5 text-sm font-medium capitalize rounded-t-lg transition-colors -mb-px ${
+              className={`px-5 py-2.5 text-sm font-medium whitespace-nowrap rounded-t-lg transition-colors -mb-px ${
                 activeTab === tab
                   ? "border border-b-background border-border bg-card text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {tab === "inquiries" ? "Inquiries" : tab === "analytics" ? "Analytics & SEO" : "Media Manager"}
+              {tab === "inquiries" ? "Inquiries" : tab === "analytics" ? "Analytics & SEO" : tab === "media" ? "Media Manager" : "Site Content"}
             </button>
           ))}
         </div>
@@ -547,6 +738,7 @@ function Dashboard({ token }: { token: string }) {
         {activeTab === "inquiries" && <InquiriesTab />}
         {activeTab === "analytics" && <AnalyticsTab />}
         {activeTab === "media" && <MediaTab token={token} />}
+        {activeTab === "content" && <ContentTab token={token} />}
       </div>
     </div>
   );

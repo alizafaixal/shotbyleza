@@ -1,48 +1,61 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const featuredImages = [
-  {
-    id: 1,
-    src: "/assets/images/model/1.webp",
-    alt: "Model portfolio photography",
-    category: "Model Portfolio",
-  },
-  {
-    id: 2,
-    src: "/assets/images/events/10.webp",
-    alt: "Event photography",
-    category: "Event",
-  },
-  {
-    id: 3,
-    src: "/assets/images/fashion/1.webp",
-    alt: "Fashion and e-commerce photography",
-    category: "Fashion & E-Commerce",
-  },
-  {
-    id: 4,
-    src: "/assets/images/portraits/1.webp",
-    alt: "Portrait photography",
-    category: "Portraits",
-  },
-  {
-    id: 5,
-    src: "/assets/images/club/1.webp",
-    alt: "Club photography",
-    category: "Club",
-  },
-  {
-    id: 6,
-    src: "/assets/images/model/2.webp",
-    alt: "Model portfolio photography",
-    category: "Model Portfolio",
-  },
+const DEFAULT_FEATURED_PATHS = [
+  "model/1.webp",
+  "events/10.webp",
+  "fashion/1.webp",
+  "portraits/1.webp",
+  "club/1.webp",
+  "model/2.webp",
 ];
 
+interface ApiImage {
+  imagePath: string;
+  category: string;
+  src: string;
+  storagePath?: string | null;
+  hidden: boolean;
+}
+
 const FeaturedWork = () => {
+  const settings = useSiteSettings();
+  const [imageMap, setImageMap] = useState<Record<string, { src: string; category: string }>>({});
+
+  useEffect(() => {
+    fetch("/api/portfolio/images")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((imgs: ApiImage[]) => {
+        const map: Record<string, { src: string; category: string }> = {};
+        for (const img of imgs) {
+          map[img.imagePath] = {
+            src: img.storagePath ?? img.src,
+            category: img.category,
+          };
+        }
+        setImageMap(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  const featuredPaths: string[] = settings.featured_images
+    ? (JSON.parse(settings.featured_images) as string[])
+    : DEFAULT_FEATURED_PATHS;
+
+  const featuredImages = featuredPaths.map((imagePath, i) => {
+    const api = imageMap[imagePath];
+    return {
+      id: i + 1,
+      src: api?.src ?? `/assets/images/${imagePath}`,
+      alt: api?.category ?? imagePath,
+      category: api?.category ?? imagePath.split("/")[0].replace(/-/g, " "),
+    };
+  });
+
   return (
     <section className="py-24 bg-card relative">
       <div className="container mx-auto px-6">
@@ -81,9 +94,7 @@ const FeaturedWork = () => {
                 alt={image.alt}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-
               <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
               <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
                 <span className="text-primary text-sm font-medium tracking-wider uppercase">
                   {image.category}
