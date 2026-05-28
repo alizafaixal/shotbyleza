@@ -76,7 +76,16 @@ const portfolioImages = categories.flatMap(({ label, folder, count }) =>
   }))
 );
 
-const portfolioVideos = [
+interface PortfolioVideo {
+  id: number;
+  category: string;
+  title: string;
+  type: string;
+  permalink: string;
+  src?: string;
+}
+
+const portfolioVideos: PortfolioVideo[] = [
   {
     id: 1,
     category: "Event",
