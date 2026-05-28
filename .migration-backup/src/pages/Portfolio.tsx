@@ -22,7 +22,7 @@ const InstagramEmbed = ({ permalink }: { permalink: string }) => {
     };
 
     const existingScript = document.querySelector(
-      'script[src="https://www.instagram.com/embed.js"]'
+      'script[src="https://www.instagram.com/embed.js"]',
     );
 
     if (!existingScript) {
@@ -72,7 +72,7 @@ const portfolioImages = categories.flatMap(({ label, folder, count }) =>
     src: `/assets/images/${folder}/${i + 1}.webp`,
     category: label,
     title: `${label} ${i + 1}`,
-  }))
+  })),
 );
 
 const portfolioVideos = [
@@ -132,11 +132,11 @@ const Portfolio = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const filteredImages = portfolioImages.filter(
-    (img) => img.category === activeCategory
+    (img) => img.category === activeCategory,
   );
 
   const filteredVideos = portfolioVideos.filter(
-    (video) => video.category === activeCategory
+    (video) => video.category === activeCategory,
   );
 
   const currentImageIndex =
@@ -149,7 +149,8 @@ const Portfolio = () => {
 
     const newIndex =
       direction === "prev"
-        ? (currentImageIndex - 1 + filteredImages.length) % filteredImages.length
+        ? (currentImageIndex - 1 + filteredImages.length) %
+          filteredImages.length
         : (currentImageIndex + 1) % filteredImages.length;
 
     setSelectedImage(filteredImages[newIndex].id);
@@ -271,7 +272,7 @@ const Portfolio = () => {
                     ) : (
                       <div className="relative aspect-[9/16] bg-black rounded-xl overflow-hidden">
                         <video controls className="w-full h-full object-cover">
-                          <source src={video.src} type="video/mp4" />
+                          <source src={video.permalink} type="video/mp4" />
                           Your browser does not support the video tag.
                         </video>
 
