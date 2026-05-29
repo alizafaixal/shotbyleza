@@ -1,15 +1,15 @@
-import express, { type Express } from "express";
+import express from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
-import path from "path";
-import fs from "fs";
-import router from "./routes";
-import { logger } from "./lib/logger";
+import path from "node:path";
+import fs from "node:fs";
+import router from "./routes/index.js";
+import { logger } from "./lib/logger.js";
 
 const uploadsDir = path.join(process.cwd(), "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
-const app: Express = express();
+const app = express();
 
 app.use(
   pinoHttp({
