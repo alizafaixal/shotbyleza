@@ -66,12 +66,15 @@ const categories = [
   { label: "Portraits", folder: "portraits", count: 12 },
 ];
 
-const portfolioImages = categories.flatMap(({ label, folder, count }) =>
+const defaultPortfolioImages = categories.flatMap(({ label, folder, count }) =>
   Array.from({ length: count }, (_, i) => ({
     id: `${folder}-${i + 1}`,
+    imagePath: `${folder}/${i + 1}.webp`,
     src: `/assets/images/${folder}/${i + 1}.webp`,
     category: label,
     title: `${label} ${i + 1}`,
+    hidden: false,
+    sortOrder: null as number | null,
   })),
 );
 
@@ -130,10 +133,53 @@ const portfolioVideos = [
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState(categories[0].label);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [portfolioImages, setPortfolioImages] = useState(defaultPortfolioImages);
 
-  const filteredImages = portfolioImages.filter(
-    (img) => img.category === activeCategory,
-  );
+  useEffect(() => {
+    const loadPortfolioImages = async () => {
+      try {
+        const res = await fetch("/api/portfolio/images");
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          const safeImages = data
+            .filter((img) => !img.hidden)
+            .map((img, index) => ({
+              id: img.imagePath || `${img.category}-${index}`,
+              imagePath: img.imagePath,
+              src: img.src || img.staticSrc,
+              category: img.category,
+              title:
+                img.customTitle ||
+                img.caption ||
+                `${img.category || "Portfolio"} ${index + 1}`,
+              hidden: Boolean(img.hidden),
+              sortOrder: img.sortOrder ?? null,
+            }))
+            .filter((img) => Boolean(img.src));
+
+          if (safeImages.length > 0) {
+            setPortfolioImages(safeImages);
+          }
+        }
+      } catch (error) {
+        console.warn("Portfolio API unavailable, using static images.", error);
+      }
+    };
+
+    loadPortfolioImages();
+  }, []);
+
+  const filteredImages = portfolioImages
+    .filter((img) => img.category === activeCategory && !img.hidden)
+    .sort((a, b) => {
+      const aOrder = a.sortOrder ?? 9999;
+      const bOrder = b.sortOrder ?? 9999;
+      return aOrder - bOrder;
+    });
 
   const filteredVideos = portfolioVideos.filter(
     (video) => video.category === activeCategory,
@@ -145,7 +191,7 @@ const Portfolio = () => {
       : -1;
 
   const navigateImage = (direction: "prev" | "next") => {
-    if (currentImageIndex === -1) return;
+    if (currentImageIndex === -1 || filteredImages.length === 0) return;
 
     const newIndex =
       direction === "prev"
@@ -209,42 +255,50 @@ const Portfolio = () => {
             </h2>
           </div>
 
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredImages.map((image, index) => (
-                <motion.div
-                  key={image.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4, delay: index * 0.04 }}
-                  onClick={() => setSelectedImage(image.id)}
-                  className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer border border-border bg-card"
-                >
-                  <img
-                    src={image.src}
-                    alt={image.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+          {filteredImages.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredImages.map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4, delay: index * 0.04 }}
+                    onClick={() => setSelectedImage(image.id)}
+                    className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer border border-border bg-card"
+                  >
+                    <img
+                      src={image.src}
+                      alt={image.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
-                    <p className="text-primary text-xs font-medium tracking-widest uppercase mb-1">
-                      {image.category}
-                    </p>
-                    <h3 className="text-foreground text-lg font-medium">
-                      {image.title}
-                    </h3>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+                      <p className="text-primary text-xs font-medium tracking-widest uppercase mb-1">
+                        {image.category}
+                      </p>
+                      <h3 className="text-foreground text-lg font-medium">
+                        {image.title}
+                      </h3>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <div className="bg-card border border-border rounded-2xl p-8 text-center">
+              <p className="text-muted-foreground">
+                No images found for this category.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
