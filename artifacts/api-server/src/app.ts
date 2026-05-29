@@ -13,7 +13,7 @@ fs.mkdirSync(uploadsDir, { recursive: true });
 const app = express();
 
 app.use(
-  pinoHttp.default({
+  (pinoHttp as any)({
     logger,
     serializers: {
       req(req: IncomingMessage) {
@@ -29,7 +29,7 @@ app.use(
         };
       },
     },
-  }),
+  })
 );
 app.use(cors());
 app.use(express.json());
