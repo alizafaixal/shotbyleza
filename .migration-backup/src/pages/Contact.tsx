@@ -87,19 +87,31 @@ const Contact = () => {
         }
       );
 
+      await fetch("/api/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          instagram: formData.instagram,
+          shootType: formData.shootType,
+          message: formData.message,
+          pageSource: "contact",
+          referrer: document.referrer || null,
+          utmSource: null,
+          utmMedium: null,
+          utmCampaign: null,
+        }),
+      });
+
       toast({
         title: "Message sent!",
         description: "Thanks for reaching out! I'll get back to you soon.",
       });
-
-      setFormData({
-        name: "",
-        email: "",
-        instagram: "",
-        shootType: "",
-        message: "",
-      });
-    } catch (error) {
+    }
+      catch (error) {
       console.error("EmailJS error:", error);
       toast({
         title: "Something went wrong",
