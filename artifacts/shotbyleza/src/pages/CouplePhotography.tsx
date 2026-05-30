@@ -16,8 +16,8 @@ const coupleStories = [
     title: "Golden Hour Beach Session",
     subtitle: "Cinematic couple portraits by the water at sunset.",
     images: [
+      "/assets/images/couple/beach1.JPG",
       "/assets/images/couple/beach.JPG",
-      "/assets/images/couple/beach2.JPG",
     ],
   },
   {
