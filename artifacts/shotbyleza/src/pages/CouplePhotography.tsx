@@ -21,19 +21,20 @@ const coupleStories = [
     ],
   },
   {
-    title: "City Night Couple Shoot",
-    subtitle: "Flash, city lights, and editorial nightlife energy.",
+    title: "City Night & Editorial Romance",
+    subtitle: "Flash, city lights, and editorial nightlife energy, Stylish couple photos with a fashion-led feeling",
     images: [
+      "/assets/images/couple/night.JPG",
       "/assets/images/couple/night1.JPG",
       "/assets/images/couple/night2.JPG",
     ],
   },
   {
-    title: "Editorial Romance",
-    subtitle: "Stylish couple photos with a fashion-led feeling.",
+    title: "Sunkissed Bride",
+    subtitle: "Desi couple photos with a nostalgic feeling.",
     images: [
-      "/assets/images/couple/editorial1.JPG",
-      "/assets/images/couple/editorial2.JPG",
+       "/assets/images/couple/editorial2.JPG",
+      "/assets/images/couple/editorial1.JPG",  
       "/assets/images/couple/editorial3.JPG",
     ],
   },
