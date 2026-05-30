@@ -1,51 +1,43 @@
-import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
-import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import CouplePhotography from "./src/pages/CouplePhotography";
 
 const queryClient = new QueryClient();
-
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pathname]);
-  return null;
-}
-
-function GoogleVerification() {
-  return (
-    <div style={{ fontFamily: "monospace", padding: "1rem" }}>
-      google-site-verification: google7c6b98f01a034f58.html
-    </div>
-  );
-}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <ScrollToTop />
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route
+            path="/"
+            element={
+              <div style={{ color: "white", fontSize: "40px" }}>
+                APP TSX TEST
+              </div>
+            }
+          />
           <Route path="/Portfolio" element={<Portfolio />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/google7c6b98f01a034f58.html" element={<GoogleVerification />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/couple-photography" element={<CouplePhotography />} />
+          <Route
+            path="/test123"
+            element={<h1 style={{color:"white"}}>TEST PAGE WORKS</h1>}
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
