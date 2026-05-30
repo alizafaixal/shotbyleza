@@ -22,7 +22,8 @@ const coupleStories = [
   },
   {
     title: "City Night & Editorial Romance",
-    subtitle: "Flash, city lights, and editorial nightlife energy, Stylish couple photos with a fashion-led feeling",
+    subtitle:
+      "A bold, modern couple shoot with flash, nightlife energy, and city atmosphere.",
     images: [
       "/assets/images/couple/night.JPG",
       "/assets/images/couple/night1.JPG",
@@ -30,11 +31,12 @@ const coupleStories = [
     ],
   },
   {
-    title: "Sunkissed Bride",
-    subtitle: "Desi couple photos with a nostalgic feeling.",
+    title: "Golden Bride Story",
+    subtitle:
+      "Warm, elegant portraits with a soft romantic feel and nostalgic desi charm.",
     images: [
-       "/assets/images/couple/editorial2.JPG",
-      "/assets/images/couple/editorial1.JPG",  
+      "/assets/images/couple/editorial2.JPG",
+      "/assets/images/couple/editorial1.JPG",
       "/assets/images/couple/editorial3.JPG",
     ],
   },
@@ -91,7 +93,7 @@ const CouplePhotography = () => {
           alt="Couple photography Sydney"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/65" />
 
         <div className="relative container mx-auto px-6 text-center">
           <motion.div
@@ -100,16 +102,16 @@ const CouplePhotography = () => {
             transition={{ duration: 0.7 }}
             className="max-w-4xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 border border-primary/40 rounded-full px-5 py-2 text-primary tracking-[0.35em] uppercase text-xs mb-6">
+            <div className="inline-flex items-center gap-2 border border-primary/50 bg-black/40 backdrop-blur-sm rounded-full px-5 py-2 text-primary tracking-[0.25em] uppercase text-xs mb-6">
               <Heart size={16} />
-              Sydney Couple Photography
+              Couple Shoots in Sydney
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-foreground mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-6 leading-tight">
               Couple Photography in Sydney
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed">
               Romantic, natural, and cinematic couple photoshoots for couples,
               engagements, anniversaries, and beautiful everyday love stories.
             </p>
@@ -124,7 +126,7 @@ const CouplePhotography = () => {
 
               <a
                 href="#packages"
-                className="border border-border bg-card/60 text-foreground px-8 py-4 rounded-lg font-medium hover:bg-card transition-colors"
+                className="border border-white/20 bg-black/30 text-white px-8 py-4 rounded-lg font-medium hover:bg-black/50 transition-colors"
               >
                 View Packages
               </a>
@@ -136,8 +138,8 @@ const CouplePhotography = () => {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mb-12">
-            <p className="text-primary tracking-[0.35em] uppercase text-sm mb-4">
-              Real moments, softly directed
+            <p className="text-primary tracking-[0.3em] uppercase text-sm mb-4">
+              Love stories, softly directed
             </p>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-5">
               A few love stories I’ve captured
@@ -163,8 +165,10 @@ const CouplePhotography = () => {
                   {story.images.map((src, imgIndex) => (
                     <div
                       key={src}
-                      className={`overflow-hidden ${
-                        imgIndex === 0 ? "row-span-2" : ""
+                      className={`overflow-hidden h-full ${
+                        story.images.length === 3 && imgIndex === 0
+                          ? "row-span-2"
+                          : ""
                       }`}
                     >
                       <img
@@ -177,7 +181,7 @@ const CouplePhotography = () => {
                 </div>
 
                 <div className="p-6">
-                  <p className="text-primary tracking-[0.25em] uppercase text-xs mb-2">
+                  <p className="text-primary tracking-[0.22em] uppercase text-xs mb-2">
                     Sydney Couple Photography
                   </p>
                   <h3 className="text-2xl font-display font-bold text-foreground mb-2">
@@ -247,7 +251,7 @@ const CouplePhotography = () => {
 
                 <Link
                   to="/contact"
-                  className="block text-center border border-border rounded-lg py-4 text-foreground font-medium hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                  className="block text-center bg-primary text-primary-foreground rounded-lg py-4 font-medium hover:bg-black hover:text-white border border-primary hover:border-white/20 transition-colors"
                 >
                   Enquire Now
                 </Link>
