@@ -8,7 +8,7 @@ const coupleStories = [
     title: "Graduation Love Story",
     subtitle: "Soft, romantic portraits for milestone moments.",
     images: [
-      "/assets/images/couple/grad1.webp",
+      "/assets/images/couple/grad1.JPG",
       "/assets/images/couple/grad2.JPG",
     ],
   },
@@ -18,8 +18,6 @@ const coupleStories = [
     images: [
       "/assets/images/couple/beach1.JPG",
       "/assets/images/couple/beach2.JPG",
-      "/assets/images/couple/beach3.JPG",
-      "/assets/images/couple/beach4.JPG",
     ],
   },
   {
@@ -34,9 +32,9 @@ const coupleStories = [
     title: "Editorial Romance",
     subtitle: "Stylish couple photos with a fashion-led feeling.",
     images: [
-      "/assets/images/couple/grad1.webp",
-      "/assets/images/couple/beach1.JPG",
-      "/assets/images/couple/night1.JPG",
+      "/assets/images/couple/editorial1.JPG",
+      "/assets/images/couple/editorial2.JPG",
+      "/assets/images/couple/editorial3.JPG",
     ],
   },
 ];
