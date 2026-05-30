@@ -8,35 +8,35 @@ const coupleStories = [
     title: "Graduation Love Story",
     subtitle: "Soft, romantic portraits for milestone moments.",
     images: [
-      "/assets/images/couple/grad1.jpg",
-      "/assets/images/couple/grad2.jpg",
+      "/assets/images/couple/grad1.webp",
+      "/assets/images/couple/grad2.JPG",
     ],
   },
   {
     title: "Golden Hour Beach Session",
     subtitle: "Cinematic couple portraits by the water at sunset.",
     images: [
-      "/assets/images/couple/beach1.jpg",
-      "/assets/images/couple/beach2.jpg",
-      "/assets/images/couple/beach3.jpg",
-      "/assets/images/couple/beach4.jpg",
+      "/assets/images/couple/beach1.JPG",
+      "/assets/images/couple/beach2.JPG",
+      "/assets/images/couple/beach3.JPG",
+      "/assets/images/couple/beach4.JPG",
     ],
   },
   {
     title: "City Night Couple Shoot",
     subtitle: "Flash, city lights, and editorial nightlife energy.",
     images: [
-      "/assets/images/couple/night1.jpg",
-      "/assets/images/couple/night2.jpg",
+      "/assets/images/couple/night1.JPG",
+      "/assets/images/couple/night2.JPG",
     ],
   },
   {
     title: "Editorial Romance",
     subtitle: "Stylish couple photos with a fashion-led feeling.",
     images: [
-      "/assets/images/couple/editorial-1.jpg",
-      "/assets/images/couple/editorial-2.jpg",
-      "/assets/images/couple/editorial-3.jpg",
+      "/assets/images/couple/grad1.webp",
+      "/assets/images/couple/beach1.JPG",
+      "/assets/images/couple/night1.JPG",
     ],
   },
 ];
@@ -88,11 +88,11 @@ const CouplePhotography = () => {
     <PageLayout>
       <section className="relative min-h-[85vh] bg-background flex items-center overflow-hidden">
         <img
-          src="/assets/images/couple/beach-1.webp"
+          src="/assets/images/couple/hero.jpg"
           alt="Couple photography Sydney"
-          className="absolute inset-0 w-full h-full object-cover opacity-45"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/70 to-background" />
+        <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative container mx-auto px-6 text-center">
           <motion.div
