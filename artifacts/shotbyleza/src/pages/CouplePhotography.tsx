@@ -135,7 +135,7 @@ const CouplePhotography = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-background">
+      <section id="coupleportfolio" className="py-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mb-12">
             <p className="text-primary tracking-[0.3em] uppercase text-sm mb-4">
