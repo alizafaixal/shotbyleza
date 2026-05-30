@@ -3,17 +3,50 @@ import { motion } from "framer-motion";
 import PageLayout from "@/components/PageLayout";
 import { Heart, Camera, Sparkles, Check } from "lucide-react";
 
-const coupleImages = Array.from({ length: 15 }, (_, i) => ({
-  src: `/assets/images/couple/${i + 1}.webp`,
-  alt: `Couple photography Sydney ${i + 1}`,
-}));
+const coupleStories = [
+  {
+    title: "Graduation Love Story",
+    subtitle: "Soft, romantic portraits for milestone moments.",
+    images: [
+      "/assets/images/couple/grad1.jpg",
+      "/assets/images/couple/grad2.jpg",
+    ],
+  },
+  {
+    title: "Golden Hour Beach Session",
+    subtitle: "Cinematic couple portraits by the water at sunset.",
+    images: [
+      "/assets/images/couple/beach1.jpg",
+      "/assets/images/couple/beach2.jpg",
+      "/assets/images/couple/beach3.jpg",
+      "/assets/images/couple/beach4.jpg",
+    ],
+  },
+  {
+    title: "City Night Couple Shoot",
+    subtitle: "Flash, city lights, and editorial nightlife energy.",
+    images: [
+      "/assets/images/couple/night1.jpg",
+      "/assets/images/couple/night2.jpg",
+    ],
+  },
+  {
+    title: "Editorial Romance",
+    subtitle: "Stylish couple photos with a fashion-led feeling.",
+    images: [
+      "/assets/images/couple/editorial-1.jpg",
+      "/assets/images/couple/editorial-2.jpg",
+      "/assets/images/couple/editorial-3.jpg",
+    ],
+  },
+];
 
 const packages = [
   {
     name: "Couple Shoot – Classic",
     price: "$350",
     description:
-      "A relaxed couple session designed to capture genuine connection in a beautiful Sydney setting.",
+      "A relaxed couple session designed to capture genuine connection in a beautiful setting.",
     features: [
       "1 hour couple shoot",
       "1 location",
@@ -55,7 +88,7 @@ const CouplePhotography = () => {
     <PageLayout>
       <section className="relative min-h-[85vh] bg-background flex items-center overflow-hidden">
         <img
-          src="/assets/images/couple/1.webp"
+          src="/assets/images/couple/beach-1.webp"
           alt="Couple photography Sydney"
           className="absolute inset-0 w-full h-full object-cover opacity-45"
         />
@@ -108,36 +141,61 @@ const CouplePhotography = () => {
               Real moments, softly directed
             </p>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-5">
-              Photos that feel like you
+              A few love stories I’ve captured
             </h2>
             <p className="text-muted-foreground text-lg">
-              I’ll guide you through natural poses, movement, and small moments
-              so you don’t feel awkward in front of the camera.
+              Each session has its own mood — soft, romantic, editorial,
+              playful, or cinematic. I’ll guide you through natural movement and
+              posing so it feels easy.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {coupleImages.map((image, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {coupleStories.map((story, index) => (
               <motion.div
-                key={image.src}
+                key={story.title}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.03 }}
-                className="aspect-[4/5] rounded-2xl overflow-hidden border border-border bg-card"
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="bg-card border border-border rounded-2xl overflow-hidden"
               >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                />
+                <div className="grid grid-cols-2 gap-1 h-[420px]">
+                  {story.images.map((src, imgIndex) => (
+                    <div
+                      key={src}
+                      className={`overflow-hidden ${
+                        imgIndex === 0 ? "row-span-2" : ""
+                      }`}
+                    >
+                      <img
+                        src={src}
+                        alt={`${story.title} ${imgIndex + 1}`}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-6">
+                  <p className="text-primary tracking-[0.25em] uppercase text-xs mb-2">
+                    Sydney Couple Photography
+                  </p>
+                  <h3 className="text-2xl font-display font-bold text-foreground mb-2">
+                    {story.title}
+                  </h3>
+                  <p className="text-muted-foreground">{story.subtitle}</p>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="packages" className="py-20 bg-card/30 border-y border-border">
+      <section
+        id="packages"
+        className="py-20 bg-card/30 border-y border-border"
+      >
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <p className="text-primary tracking-[0.35em] uppercase text-sm mb-4">
@@ -174,9 +232,7 @@ const CouplePhotography = () => {
                   {pkg.price}
                 </p>
 
-                <p className="text-muted-foreground mb-8">
-                  {pkg.description}
-                </p>
+                <p className="text-muted-foreground mb-8">{pkg.description}</p>
 
                 <ul className="space-y-4 mb-8">
                   {pkg.features.map((feature) => (
