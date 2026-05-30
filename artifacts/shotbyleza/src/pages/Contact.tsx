@@ -238,7 +238,9 @@ const Contact = () => {
       toast({
         title: "Message sent!",
         description: "Thanks for reaching out! I'll get back to you soon.",
+        
       });
+      window.location.href = "/thank-you";
 
       setFormData({ name: "", email: "", instagram: "", shootType: "", message: "" });
     } catch (error) {
