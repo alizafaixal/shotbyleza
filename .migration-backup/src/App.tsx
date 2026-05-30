@@ -27,6 +27,10 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/couple-photography" element={<CouplePhotography />} />
+          <Route
+            path="/test123"
+            element={<h1 style={{color:"white"}}>TEST PAGE WORKS</h1>}
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
