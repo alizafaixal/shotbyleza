@@ -20,7 +20,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route
+            path="/"
+            element={
+              <div style={{ color: "white", fontSize: "40px" }}>
+                APP TSX TEST
+              </div>
+            }
+          />
           <Route path="/Portfolio" element={<Portfolio />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
